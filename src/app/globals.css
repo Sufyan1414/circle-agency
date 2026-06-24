@@ -1,0 +1,510 @@
+@import 'tailwindcss';
+
+/* ═══════════════════════════════════════════════════════════════
+   CIRCLE — Hyper-Premium Design System
+   Ultra-Dark Obsidian + Electric Hyper-Blue
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Core Palette ── */
+  --color-obsidian:       #010102;
+  --color-obsidian-deep:  #020202;
+  --color-obsidian-light: #0D0D0E;
+  --color-obsidian-card:  #111113;
+  --color-obsidian-border:#1A1A1E;
+  --color-off-white:      #FFFFFF;
+  --color-silver:         #A8AAAD;
+  --color-silver-bright:  #D4D6DA;
+  --color-muted:          #6B6E75;
+  --color-muted-light:    #9DA0A8;
+
+  /* ── Accent: Electric Hyper-Blue ── */
+  --color-blue:           #0052FF;
+  --color-blue-bright:    #1A66FF;
+  --color-blue-glow:      #3380FF;
+  --color-blue-dim:       #003BBF;
+  --color-blue-ultra:     #0040CC;
+
+  /* ── Legacy support aliases ── */
+  --color-violet:         #0052FF;
+  --color-violet-deep:    #003BBF;
+  --color-violet-glow:    #3380FF;
+  --color-cyan:           #4DA6FF;
+  --color-cyan-bright:    #80BFFF;
+  --color-cyan-glow:      #99CCFF;
+  --color-emerald:        #10D9A0;
+  --color-rose:           #FF3B5C;
+
+  /* ── Typography Scale (Fluid) ── */
+  --font-size-xs:    clamp(0.6875rem, 0.65rem + 0.1875vw, 0.75rem);
+  --font-size-sm:    clamp(0.8125rem, 0.75rem + 0.3125vw, 0.875rem);
+  --font-size-base:  clamp(0.9375rem, 0.875rem + 0.3125vw, 1rem);
+  --font-size-lg:    clamp(1.0625rem, 0.975rem + 0.4375vw, 1.1875rem);
+  --font-size-xl:    clamp(1.1875rem, 1.0625rem + 0.625vw, 1.3125rem);
+  --font-size-2xl:   clamp(1.375rem, 1.125rem + 1.25vw, 1.625rem);
+  --font-size-3xl:   clamp(1.625rem, 1.2rem + 2.125vw, 2.125rem);
+  --font-size-4xl:   clamp(2rem, 1.375rem + 3.125vw, 2.625rem);
+  --font-size-5xl:   clamp(2.5rem, 1.625rem + 4.375vw, 3.375rem);
+  --font-size-6xl:   clamp(3rem, 1.75rem + 6.25vw, 4.25rem);
+  --font-size-7xl:   clamp(3.5rem, 1.875rem + 8.125vw, 5.25rem);
+  --font-size-8xl:   clamp(4.25rem, 2rem + 11.25vw, 7rem);
+
+  /* ── Spacing ── */
+  --spacing-section: clamp(6rem, 4rem + 5vw, 9rem);
+
+  /* ── Easings ── */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:   cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring:    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ── Global Resets ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none; /* Hide default cursor — magnetic cursor replaces it */
+}
+
+body {
+  background-color: var(--color-obsidian);
+  color: var(--color-off-white);
+  overflow-x: hidden;
+}
+
+/* Show default cursor on touch devices */
+@media (hover: none) {
+  html {
+    cursor: auto;
+  }
+}
+
+/* ── Selection ── */
+::selection {
+  background-color: rgba(0, 82, 255, 0.4);
+  color: var(--color-off-white);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-obsidian);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-obsidian-border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-blue);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENT UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Section wrapper */
+.section-container {
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 1rem + 2.5vw, 3rem);
+}
+
+/* Glass card */
+.glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(17, 17, 19, 0.85) 0%,
+    rgba(5, 5, 5, 0.6) 100%
+  );
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 1.25rem;
+}
+
+/* Gradient text — Blue */
+.text-gradient-blue {
+  background: linear-gradient(
+    135deg,
+    #80BFFF 0%,
+    #4DA6FF 30%,
+    #0052FF 70%,
+    #3380FF 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Legacy alias */
+.text-gradient-violet {
+  background: linear-gradient(135deg, #80BFFF, #0052FF, #3380FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #99CCFF, #4DA6FF, #0052FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow:
+    0 0 30px rgba(0, 82, 255, 0.2),
+    0 0 80px rgba(0, 82, 255, 0.08),
+    0 0 160px rgba(0, 82, 255, 0.03);
+}
+
+.glow-violet {
+  box-shadow:
+    0 0 30px rgba(0, 82, 255, 0.2),
+    0 0 80px rgba(0, 82, 255, 0.08);
+}
+
+.glow-cyan {
+  box-shadow:
+    0 0 20px rgba(77, 166, 255, 0.15),
+    0 0 60px rgba(77, 166, 255, 0.05);
+}
+
+/* Badge chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3125rem 0.875rem;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 82, 255, 0.2);
+  background: rgba(0, 82, 255, 0.06);
+  color: var(--color-blue-glow);
+}
+
+/* Noise overlay texture */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Word split overflow mask */
+.word-mask {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MAGNETIC CURSOR STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+.cursor-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 82, 255, 0.6);
+  pointer-events: none;
+  z-index: 99999;
+  mix-blend-mode: difference;
+  transition: transform 0.08s ease, width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo), border-color 0.3s ease, background 0.3s ease;
+  transform: translate(-50%, -50%);
+  will-change: transform, width, height;
+}
+
+.cursor-outer.is-hovering {
+  width: 72px;
+  height: 72px;
+  border-color: rgba(0, 82, 255, 0.9);
+  background: rgba(0, 82, 255, 0.08);
+}
+
+.cursor-outer.is-clicking {
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0052FF;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.04s ease;
+  will-change: transform;
+}
+
+.cursor-dot.is-hovering {
+  opacity: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVBAR STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+.nav-glass-pill {
+  background: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO TEXT REVEAL
+   ═══════════════════════════════════════════════════════════════ */
+
+.hero-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  margin-right: 0.275em;
+}
+
+.hero-word-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BENTO CARD 3D TILT
+   ═══════════════════════════════════════════════════════════════ */
+
+.bento-card {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transition: box-shadow 0.4s ease;
+}
+
+.bento-spotlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: radial-gradient(
+    400px circle at 50% 50%,
+    rgba(0, 82, 255, 0.12),
+    transparent 70%
+  );
+}
+
+.bento-card:hover .bento-spotlight {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.8; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes grid-fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes border-glow-pulse {
+  0%, 100% { border-color: rgba(0, 82, 255, 0.3); box-shadow: 0 0 0px rgba(0, 82, 255, 0); }
+  50%       { border-color: rgba(0, 82, 255, 0.8); box-shadow: 0 0 20px rgba(0, 82, 255, 0.2); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-border-pulse {
+  animation: border-glow-pulse 1.5s ease-in-out;
+}
+
+/* Gradient grid background */
+.grid-background {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* CLS prevention */
+[data-framer-appear] {
+  will-change: transform, opacity;
+}
+
+/* Form field focus — blue glow */
+.field-focus-blue:focus {
+  border-color: rgba(0, 82, 255, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.12), 0 0 20px rgba(0, 82, 255, 0.08);
+  outline: none;
+}
+
+.field-validated {
+  border-color: rgba(16, 217, 160, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(16, 217, 160, 0.08);
+}
+
+.field-error {
+  border-color: rgba(255, 59, 92, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(255, 59, 92, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3D SPATIAL UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Spatial Navbar — Z-axis link hover */
+.spatial-nav {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.spatial-nav-link {
+  transition: transform 0.35s var(--ease-cinematic), color 0.3s ease;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.spatial-nav-link:hover {
+  transform: translateZ(4px);
+}
+
+/* 3D Cube Form Container */
+.cube-form-container {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.cube-form-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s var(--ease-cinematic);
+}
+
+.cube-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.cube-face-front {
+  transform: rotateX(0deg);
+}
+
+.cube-face-right {
+  transform: rotateX(-90deg) translateZ(var(--cube-depth, 300px));
+}
+
+.cube-face-back {
+  transform: rotateX(-180deg) translateZ(var(--cube-depth, 300px));
+}
+
+.cube-face-left {
+  transform: rotateX(-270deg) translateZ(var(--cube-depth, 300px));
+}
+
+/* Enhanced 3D card depth for bento grid */
+.spatial-card {
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease, box-shadow 0.4s ease;
+}
+
+.spatial-card:hover {
+  box-shadow:
+    0 30px 80px rgba(0, 82, 255, 0.15),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Hero parallax layers */
+.parallax-back {
+  will-change: transform;
+}
+
+.parallax-front {
+  will-change: transform;
+}
+
+/* 3D Canvas container */
+.canvas-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.canvas-container canvas {
+  pointer-events: auto;
+}
+
+/* Step indicator for cube form */
+.step-indicator {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.4s var(--ease-cinematic);
+}
+
+.step-dot.active {
+  background: #0052FF;
+  border-color: rgba(0, 82, 255, 0.6);
+  box-shadow: 0 0 12px rgba(0, 82, 255, 0.4);
+  width: 24px;
+  border-radius: 4px;
+}
+
+.step-dot.completed {
+  background: #10D9A0;
+  border-color: rgba(16, 217, 160, 0.5);
+}
