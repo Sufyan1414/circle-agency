@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, Suspense } from 'react'
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring, useInView, MotionValue } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { Canvas } from '@react-three/fiber'
 import { useScenePerformance } from '@/components/3d/Scene3DProvider'
@@ -153,9 +153,26 @@ function ParallaxFrame({
 }
 
 /* ── Single case study card ── */
-function CaseCard({ study, index }: { study: (typeof studies)[0]; index: number }) {
+function CaseCard({
+  study,
+  index,
+  sectionProgress,
+}: {
+  study: (typeof studies)[0]
+  index: number
+  sectionProgress: MotionValue<number>
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
+
+  // Alternating up/down parallax — odd cards go up, even go down
+  // Each card has a slightly different magnitude for visual richness
+  const driftDirections = [1, -1, 1]          // +1 = drift down→up, -1 = drift up→down
+  const driftMagnitudes = [40, 55, 35]         // pixels of total travel
+  const dir = driftDirections[index % 3]
+  const mag = driftMagnitudes[index % 3]
+  const rawCardY = useTransform(sectionProgress, [0, 1], [mag * dir * 0.5, -mag * dir * 0.5])
+  const cardY = useSpring(rawCardY, { stiffness: 50, damping: 18, mass: 0.7 })
 
   const isReversed = index % 2 === 1
 
@@ -170,10 +187,14 @@ function CaseCard({ study, index }: { study: (typeof studies)[0]; index: number 
         ease: [0.22, 1, 0.36, 1],
         delay: 0.05,
       }}
+      style={{
+        y: cardY,
+        direction: isReversed ? 'rtl' : 'ltr',
+        willChange: 'transform',
+      }}
       className={`grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center ${
         isReversed ? 'lg:direction-reverse' : ''
       }`}
-      style={{ direction: isReversed ? 'rtl' : 'ltr' }}
     >
       {/* Parallax visual */}
       <div style={{ direction: 'ltr' }}>
@@ -260,19 +281,30 @@ function CaseCard({ study, index }: { study: (typeof studies)[0]; index: number 
 }
 
 export default function CaseStudies() {
+  const sectionRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const isHeaderInView = useInView(headerRef, { once: true, margin: '-80px' })
 
+  // Section-level scroll for card drift parallax
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+
+  // Header drifts up gently as section scrolls in
+  const rawHeaderY = useTransform(scrollYProgress, [0, 1], [25, -25])
+  const headerY = useSpring(rawHeaderY, { stiffness: 50, damping: 20 })
+
   return (
-    <section id="cases" className="py-(--spacing-section) relative overflow-hidden">
+    <section id="cases" ref={sectionRef} className="py-(--spacing-section) relative overflow-hidden">
       <div
         className="absolute inset-x-0 top-0 h-px"
         style={{ background: 'linear-gradient(90deg, transparent, rgba(0,82,255,0.12), transparent)' }}
       />
 
       <div className="section-container">
-        {/* Header */}
-        <div ref={headerRef} className="mb-24">
+        {/* Header with gentle parallax */}
+        <motion.div ref={headerRef} className="mb-24" style={{ y: headerY }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
@@ -291,16 +323,16 @@ export default function CaseStudies() {
               className="text-muted mt-5 max-w-xl leading-relaxed"
               style={{ fontSize: 'var(--font-size-lg)' }}
             >
-              Real outcomes. Real metrics. No vanity case studies — only measurable 
+              Real outcomes. Real metrics. No vanity case studies — only measurable
               business impact at enterprise scale.
             </p>
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Case studies — alternating layout */}
+        {/* Case studies — alternating layout with depth drift */}
         <div className="space-y-32">
           {studies.map((study, i) => (
-            <CaseCard key={study.id} study={study} index={i} />
+            <CaseCard key={study.id} study={study} index={i} sectionProgress={scrollYProgress} />
           ))}
         </div>
       </div>

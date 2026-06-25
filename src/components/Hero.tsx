@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
-import { motion, useAnimation, useInView, useScroll, useTransform } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight, ChevronRight } from 'lucide-react'
 
 /* ── Word-split text reveal ── */
@@ -132,161 +132,86 @@ function AnimatedStat({ value, label }: { value: string; label: string }) {
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
-  const { scrollY } = useScroll({
+  const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end start"]
+    offset: ['start start', 'end start'],
   })
 
-  // 3D Parallax offset for the text content — syncs with global torus
-  const textY = useTransform(scrollY, [0, 1000], [0, -150])
+  const yOrb1 = useTransform(scrollYProgress, [0, 1], [0, -400])
+  const yOrb2 = useTransform(scrollYProgress, [0, 1], [0, -200])
+  const yGrid = useTransform(scrollYProgress, [0, 1], [0, -100])
+  const yContent = useTransform(scrollYProgress, [0, 1], [0, -300])
+  const yStats = useTransform(scrollYProgress, [0, 1], [0, -150])
 
   return (
-    <section
-      id="hero"
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden"
-    >
-      {/* Layered ambient blobs */}
+    <section id="hero" ref={sectionRef} className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+      {/* ── Parallax background layers ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Primary blue orb top right */}
-        <div
-          className="absolute top-[-15%] right-[-5%] w-[700px] h-[700px] rounded-full animate-pulse-glow animate-duration-10s"
+        {/* Orb 1 — deepest layer, moves slowest (0.08×) */}
+        <motion.div
+          className="absolute top-[-15%] right-[-5%] w-[700px] h-[700px] rounded-full animate-pulse-glow"
           style={{
-            background: 'radial-gradient(circle, rgba(0,82,255,0.12) 0%, rgba(0,82,255,0.04) 50%, transparent 70%)',
+            y: yOrb1,
+            background: 'radial-gradient(circle, rgba(0,82,255,0.14) 0%, rgba(0,82,255,0.04) 50%, transparent 70%)',
             filter: 'blur(60px)',
+            willChange: 'transform',
           }}
         />
-        {/* Subtle secondary orb bottom left */}
-        <div
-          className="absolute bottom-[-10%] left-[-8%] w-[500px] h-[500px] rounded-full animate-pulse-glow animate-duration-10s"
+        {/* Orb 2 — second-deepest layer (0.14×) */}
+        <motion.div
+          className="absolute bottom-[-10%] left-[-8%] w-[500px] h-[500px] rounded-full animate-pulse-glow"
           style={{
-            background: 'radial-gradient(circle, rgba(77,166,255,0.06) 0%, transparent 70%)',
+            y: yOrb2,
+            background: 'radial-gradient(circle, rgba(77,166,255,0.07) 0%, transparent 70%)',
             filter: 'blur(80px)',
             animationDelay: '2s',
+            willChange: 'transform',
           }}
         />
-        {/* Grid background texture */}
-        <div className="absolute inset-0 grid-background opacity-50" />
+        {/* Grid texture — slow layer (0.25×) */}
+        <motion.div
+          className="absolute inset-0 grid-background opacity-50"
+          style={{ y: yGrid, willChange: 'transform' }}
+        />
       </div>
 
       <div className="section-container relative z-10 w-full">
-        <motion.div style={{ y: textY }} className="max-w-5xl">
-
-          {/* Chip badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-            className="mb-10"
-          >
+        <motion.div style={{ y: yContent }} className="max-w-5xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="mb-10">
             <span className="chip">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
               Accepting Enterprise Mandates — Q3 2025
             </span>
           </motion.div>
 
-          {/* Main headline with word-split reveal */}
-          <h1
-            className="font-[family-name:var(--font-space)] font-bold leading-[1.06] tracking-tight mb-8"
-            style={{ fontSize: 'var(--font-size-7xl)' }}
-            aria-label="Circle. We Engineer Scale for Global Enterprises."
-          >
-            <WordReveal
-              text="Circle."
-              delay={0.2}
-              stagger={0.06}
-              className="text-off-white"
-            />
+          <h1 className="font-[family-name:var(--font-space)] font-bold leading-[1.06] tracking-tight mb-8" style={{ fontSize: 'var(--font-size-7xl)' }}>
+            <WordReveal text="Circle." delay={0.2} stagger={0.06} className="text-off-white" />
             <br />
-            <WordReveal
-              text="We Engineer"
-              delay={0.35}
-              stagger={0.08}
-              className="text-off-white"
-            />
+            <WordReveal text="We Engineer" delay={0.35} stagger={0.08} className="text-off-white" />
             {' '}
-            <span className="inline-block overflow-hidden">
-              <motion.span
-                initial={{ y: '110%', opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.55 }}
-                className="text-gradient-blue inline-block"
-              >
-                Scale
-              </motion.span>
-            </span>
+            <span className="inline-block overflow-hidden"><motion.span initial={{ y: '110%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.9, delay: 0.55 }} className="text-gradient-blue inline-block">Scale</motion.span></span>
             <br />
-            <WordReveal
-              text="for Global Enterprises."
-              delay={0.65}
-              stagger={0.07}
-              className="text-silver"
-            />
+            <WordReveal text="for Global Enterprises." delay={0.65} stagger={0.07} className="text-silver" />
           </h1>
 
-          {/* Subline — cinematic fade-up */}
-          <motion.p
-            initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.9 }}
-            className="text-muted-light max-w-2xl mb-12 leading-relaxed"
-            style={{ fontSize: 'var(--font-size-lg)' }}
-          >
-            We architect resilient cloud infrastructure, deploy autonomous AI coordination
-            layers, and provide fractional CTO governance for modern enterprises.
-            Zero downtime. Infinite scale.
+          <motion.p initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1, delay: 0.9 }} className="text-muted-light max-w-2xl mb-12 leading-relaxed" style={{ fontSize: 'var(--font-size-lg)' }}>
+            We architect resilient cloud infrastructure, deploy autonomous AI coordination layers, and provide fractional CTO governance for modern enterprises. Zero downtime. Infinite scale.
           </motion.p>
 
-          {/* Magnetic CTA buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 1.05 }}
-            className="flex flex-wrap gap-4 mb-20"
-          >
-            <MagneticButton href="#contact" id="hero-cta-primary" variant="primary">
-              Start Your Enterprise Build
-              <ArrowUpRight className="w-4 h-4" />
-            </MagneticButton>
-            <MagneticButton href="#cases" id="hero-cta-secondary" variant="secondary">
-              View Case Studies
-              <ChevronRight className="w-4 h-4 opacity-60" />
-            </MagneticButton>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 1.05 }} className="flex flex-wrap gap-4 mb-20">
+            <MagneticButton href="#contact" id="hero-cta-primary" variant="primary">Start Your Enterprise Build<ArrowUpRight className="w-4 h-4" /></MagneticButton>
+            <MagneticButton href="#cases" id="hero-cta-secondary" variant="secondary">View Case Studies<ChevronRight className="w-4 h-4 opacity-60" /></MagneticButton>
           </motion.div>
+        </motion.div>
 
-          {/* Divider line */}
-          <motion.div
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 1.15 }}
-            className="h-px mb-12 origin-left"
-            style={{ background: 'linear-gradient(90deg, rgba(0,82,255,0.3), rgba(255,255,255,0.04), transparent)' }}
-          />
-
-          {/* Stats grid */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-10"
-          >
-            {[
-              { value: '$2.4B+', label: 'Enterprise Value Engineered' },
-              { value: '340%', label: 'System Velocity Acceleration' },
-              { value: '99.999%', label: 'Guaranteed Infrastructure Uptime' },
-              { value: '<42ms', label: 'Global Edge Latency' },
-            ].map((stat) => (
-              <AnimatedStat key={stat.label} {...stat} />
-            ))}
+        <motion.div style={{ y: yStats }}>
+          <motion.div initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} transition={{ duration: 1, delay: 1.15 }} className="h-px mb-12 origin-left" style={{ background: 'linear-gradient(90deg, rgba(0,82,255,0.3), rgba(255,255,255,0.04), transparent)' }} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.2 }} className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            {[{ value: '$2.4B+', label: 'Enterprise Value Engineered' }, { value: '340%', label: 'System Velocity Acceleration' }, { value: '99.999%', label: 'Guaranteed Infrastructure Uptime' }, { value: '<42ms', label: 'Global Edge Latency' }].map((stat) => <AnimatedStat key={stat.label} {...stat} />)}
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Bottom fade out */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, transparent, var(--color-obsidian))' }}
-      />
+      <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--color-obsidian))' }} />
     </section>
   )
 }

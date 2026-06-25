@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useCallback } from 'react'
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform, MotionValue } from 'framer-motion'
 import {
   Globe,
   BrainCircuit,
@@ -71,13 +71,19 @@ const services = [
 interface BentoCardProps {
   service: (typeof services)[0]
   index: number
+  sectionProgress: MotionValue<number>
 }
 
-function BentoCard({ service, index }: BentoCardProps) {
+function BentoCard({ service, index, sectionProgress }: BentoCardProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const [isHovered, setIsHovered] = useState(false)
   const [spotlight, setSpotlight] = useState({ x: '50%', y: '50%', opacity: 0 })
+
+  // Per-card parallax drift — each card gets a unique vertical travel distance
+  const driftAmounts = [-35, -55, -25]
+  const rawDrift = useTransform(sectionProgress, [0, 1], [0, driftAmounts[index % 3]])
+  const cardDrift = useSpring(rawDrift, { stiffness: 55, damping: 18, mass: 0.6 })
 
   const xVal = useMotionValue(0)
   const yVal = useMotionValue(0)
@@ -143,12 +149,14 @@ function BentoCard({ service, index }: BentoCardProps) {
         rotateY,
         scale,
         z,
+        y: cardDrift,
         transformStyle: 'preserve-3d',
         perspective: 1000,
         zIndex: isHovered ? 50 : 1,
         boxShadow: spotlight.opacity > 0
           ? `0 35px 80px ${service.glowColor}, 0 15px 45px rgba(0,0,0,0.5)`
           : '0 4px 24px rgba(0,0,0,0.4)',
+        willChange: 'transform',
       }}
       id={`service-card-${service.id}`}
     >
@@ -264,11 +272,22 @@ function BentoCard({ service, index }: BentoCardProps) {
 }
 
 export default function ServicesGrid() {
+  const sectionRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const isHeaderInView = useInView(headerRef, { once: true, margin: '-80px' })
 
+  // Section-level scroll drives the staggered card drift
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+
+  // Header text gets a gentle upward drift (different depth from cards)
+  const rawHeaderY = useTransform(scrollYProgress, [0, 1], [30, -30])
+  const headerParallaxY = useSpring(rawHeaderY, { stiffness: 55, damping: 20 })
+
   return (
-    <section id="services" className="py-(--spacing-section) relative overflow-hidden">
+    <section id="services" ref={sectionRef} className="py-(--spacing-section) relative overflow-hidden">
       {/* Section top divider */}
       <div
         className="absolute inset-x-0 top-0 h-px"
@@ -276,8 +295,8 @@ export default function ServicesGrid() {
       />
 
       <div className="section-container">
-        {/* Section header */}
-        <div ref={headerRef} className="mb-16">
+        {/* Section header with own parallax */}
+        <motion.div ref={headerRef} className="mb-16" style={{ y: headerParallaxY }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
@@ -299,12 +318,12 @@ export default function ServicesGrid() {
               we operate where engineering complexity and business stakes are highest.
             </p>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Asymmetric Bento Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-5 lg:h-[820px]">
           {services.map((service, i) => (
-            <BentoCard key={service.id} service={service} index={i} />
+            <BentoCard key={service.id} service={service} index={i} sectionProgress={scrollYProgress} />
           ))}
         </div>
       </div>

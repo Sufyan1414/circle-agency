@@ -508,3 +508,62 @@ body {
   background: #10D9A0;
   border-color: rgba(16, 217, 160, 0.5);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL-DRIVEN PARALLAX DEPTH SYSTEM
+   ═══════════════════════════════════════════════════════════════ */
+
+/**
+ * Every parallax element is GPU-promoted and compositor-only.
+ * These classes ensure the browser never triggers layout/paint on scroll.
+ */
+.parallax-layer {
+  will-change: transform;
+  /* Prevent sub-pixel blurring on GPU-promoted layers */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Preserve 3D context for child translateZ effects */
+  transform-style: preserve-3d;
+}
+
+/* Depth z-index stacking: far → front */
+.depth-far   { z-index: 0; }
+.depth-mid   { z-index: 1; }
+.depth-near  { z-index: 2; }
+.depth-front { z-index: 3; }
+
+/* Parallax section — creates its own stacking context cleanly */
+.parallax-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Floating metric card glass style (used in ParallaxShowcase) */
+.parallax-float-card {
+  background: rgba(10, 10, 12, 0.75);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  select: none;
+}
+
+/* Smooth scroll hint — prevents jank on Mac trackpads */
+@media (prefers-reduced-motion: no-preference) {
+  .parallax-layer {
+    transition: none; /* All animation via MotionValue — no CSS transitions */
+  }
+}
+
+/* Respect user's motion preference — disable parallax drift */
+@media (prefers-reduced-motion: reduce) {
+  .parallax-layer {
+    will-change: auto;
+    transform: none !important;
+  }
+}

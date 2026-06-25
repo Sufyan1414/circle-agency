@@ -57,6 +57,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2955659503296140"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="font-[family-name:var(--font-inter)] antialiased">
         <AudioEngineProvider>
           {/* Magnetic cursor — client-only, no SSR flash */}
